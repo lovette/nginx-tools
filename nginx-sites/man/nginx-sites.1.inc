@@ -33,7 +33,7 @@ Select all sites in group \fIgroup\fR whose name matches shell pattern \fIpatter
 
 [CONFIGURATION FILE]
 Comment blocks in the main nginx configuration file are parsed for
-fInginx-sites-*\fR configuration options.
+\fInginx-sites-*\fR configuration options.
 The default nginx configuration file path is /etc/nginx/nginx.conf.
 This path can be changed using the \fB\-c\fR command line option.
 <confdir> is the directory containing the nginx configuration file.
