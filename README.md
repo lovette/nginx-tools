@@ -3,6 +3,12 @@
 A collection of tools for the [nginx Web server](http://www.nginx.org/)
 
 
+Tools
+---
+
+* [nginx-sites](https://github.com/lovette/nginx-tools/tree/master/nginx-sites) - Simple site status management
+
+
 Requirements
 ---
 
