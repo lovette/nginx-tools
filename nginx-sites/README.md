@@ -9,7 +9,7 @@ A common way to manage nginx sites is to group configuration files that define
 available servers in a directory, typically named `sites-available`.
 Individual sites are then enabled by creating a symbolic link to the configuration
 file from within a second directory, typically named `sites-enabled`.
-The main nginx configuration file then has an `include sites-enabled/*`.
+The main nginx configuration file then has an `include sites-enabled/*` directive.
 This tool provides a simple way to manage the links in the `sites-enabled`
 directory.
 
