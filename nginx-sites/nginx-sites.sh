@@ -229,14 +229,12 @@ function get_site_server_names()
 	availpath=$(get_path_avail "$site")
 	[ $? -eq 0 ] || exit_nosite_error "$site: Site not found"
 
-	servers=$(awk '/^[[:space:]]*server_name[[:space:]]+/ { print }' "$availpath" | sed -r "s/server_name[[:space:]]+([^;]+);?$/\1/" | tr "[:space:]" " ")
-	listen=$(awk '/^[[:space:]]*listen[[:space:]]+/ { print }' "$availpath" | sed -r "s/listen[[:space:]]+([^;]+);?$/\1/" | tr "[:space:]" " ")
+	servers=$(awk '/^[[:space:]]*server_name[[:space:]]+/ { for (i=2;i<=NF;i++) print $i }' "$availpath" | tr -d ";" | sort -u | tr "[:space:]" " ")
+	listen=$(awk '/^[[:space:]]*listen[[:space:]]+/ { for (i=2;i<=NF;i++) print $i }' "$availpath" | tr -d ";" | sort -u | tr "[:space:]" " ")
 
-	# Trim spaces
+	# Trim trailing spaces
 	servers=${servers%% }
-	servers=${servers## }
 	listen=${listen%% }
-	listen=${listen## }
 
 	[ -z "$listen" ] || listen="["${listen// /:}"]"
 
