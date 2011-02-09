@@ -1,11 +1,18 @@
 _nginx_sites()
 {
-	local cur prev opts cmd
+	local cur prev opts cmd i max
 
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
-	cmd="${COMP_WORDS[1]}"
+	cmd=""
 
+	# The first non-option is the command
+	for (( i=1, max="${#COMP_WORDS[@]}"; i < max; i++ ))
+	do
+		[[ "${COMP_WORDS[$i]}" = -* ]] && continue
+		cmd="${COMP_WORDS[$i]}"
+		break
+	done
 
 	case "${cmd}" in
 	list)
