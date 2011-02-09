@@ -144,7 +144,7 @@ function close_stdout()
 function safe_exec()
 {
 	if [ $GETOPT_DRYRUN -eq 0 ]; then
-		$@
+		eval $@
 	elif [ $GETOPT_VERBOSE -gt 2 ]; then
 		echo "$@"
 	fi
