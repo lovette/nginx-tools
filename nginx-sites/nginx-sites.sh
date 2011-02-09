@@ -223,22 +223,27 @@ function enum_enabled_paths()
 function get_site_server_names()
 {
 	local site="$1"
-	local servers=
+	local servers=( )
+	local listen=( )
 	local availpath=
 
 	availpath=$(get_path_avail "$site")
 	[ $? -eq 0 ] || exit_nosite_error "$site: Site not found"
 
-	servers=$(awk '/^[[:space:]]*server_name[[:space:]]+/ { for (i=2;i<=NF;i++) print $i }' "$availpath" | tr -d ";" | sort -u | tr "[:space:]" " ")
-	listen=$(awk '/^[[:space:]]*listen[[:space:]]+/ { for (i=2;i<=NF;i++) print $i }' "$availpath" | tr -d ";" | sort -u | tr "[:space:]" " ")
+	servers=( $(awk '/^[[:space:]]*server_name[[:space:]]+/ { for (i=2;i<=NF;i++) print $i }' "$availpath" | tr -d ";" | sort -u | tr "[:space:]" " ") )
+	listen=( $(awk '/^[[:space:]]*listen[[:space:]]+/ { for (i=2;i<=NF;i++) print $i }' "$availpath" | tr -d ";" | sort -u | tr "[:space:]" " ") )
 
-	# Trim trailing spaces
-	servers=${servers%% }
-	listen=${listen%% }
+	listen="${listen[@]}"
 
 	[ -z "$listen" ] || listen="["${listen// /:}"]"
 
-	echo ${servers// /, } "$listen"
+	if [ "${#servers[@]}" -gt 2 ]; then
+		echo "${servers[0]}, ${servers[1]}, ... (${#servers[@]} total) $listen"
+	else
+		servers="${servers[@]}"
+		echo ${servers// /, } "$listen"
+	fi
+
 	return 0
 }
 
