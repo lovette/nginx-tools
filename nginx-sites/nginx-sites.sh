@@ -216,6 +216,46 @@ function enum_enabled_paths()
 	return 0
 }
 
+# combine_subdomains(array)
+# Combines domains with subdomains to compact text
+# Example: [foo.com www.foo.com] becomes (www.)foo.com
+# Outputs reduced domains
+function combine_subdomains()
+{
+	local servers=( "$@" )
+	local i j max
+
+	# Sort domains by length so root domains are before subdomains
+	servers=( $(echo "${servers[@]}" | tr " " "\n" | awk '{print length"\t"$0}' | sort -n | cut -f2-) )
+	
+	for (( i=0, max="${#servers[@]}"; i < max; i++ ))
+	do
+		# Skip subdomains we've combined already
+		[ -n "${servers[$i]}" ] || continue;
+
+		# Escape special characters
+		local regex="^(.+)\.${servers[$i]//./\.}$"
+
+		local subdomains=( )
+
+		# Build list of subdomains for domain
+		for (( j=i+1; j < max; j++ ))
+		do
+			if [[ "${servers[$j]}" =~ "$regex" ]]; then
+				subdomains=( ${subdomains[@]} "${BASH_REMATCH[1]}" )
+				servers[$j]=""
+			fi
+		done
+
+		if [ ${#subdomains[@]} -gt 0 ]; then
+			subdomains="${subdomains[@]}"
+			echo "(${subdomains// /|}.)${servers[$i]}"
+		else
+			echo "${servers[$i]}"
+		fi
+	done
+}
+
 # get_site_server_names(name)
 # 'name' can be <site> or <group>/<site>
 # Parses nginx configuration file and outputs server_name and listen values of site
@@ -226,6 +266,7 @@ function get_site_server_names()
 	local servers=( )
 	local listen=( )
 	local availpath=
+	local servercnt=0
 
 	availpath=$(get_path_avail "$site")
 	[ $? -eq 0 ] || exit_nosite_error "$site: Site not found"
@@ -233,12 +274,16 @@ function get_site_server_names()
 	servers=( $(awk '/^[[:space:]]*server_name[[:space:]]+/ { for (i=2;i<=NF;i++) print $i }' "$availpath" | tr -d ";" | sort -u | tr "[:space:]" " ") )
 	listen=( $(awk '/^[[:space:]]*listen[[:space:]]+/ { for (i=2;i<=NF;i++) print $i }' "$availpath" | tr -d ";" | sort -u | tr "[:space:]" " ") )
 
+	servercnt=${#servers[@]}
+
+	[ "${#servers[@]}" -gt 1 ] && servers=( $(combine_subdomains "${servers[@]}" | sort) )
+
 	listen="${listen[@]}"
 
-	[ -z "$listen" ] || listen="["${listen// /:}"]"
+	[ -z "$listen" ] || listen="[:"${listen// /:}"]"
 
 	if [ "${#servers[@]}" -gt 2 ]; then
-		echo "${servers[0]}, ${servers[1]}, ... (${#servers[@]} total) $listen"
+		echo "${servers[0]}, ${servers[1]}, ... ($servercnt total) $listen"
 	else
 		servers="${servers[@]}"
 		echo ${servers// /, } "$listen"
