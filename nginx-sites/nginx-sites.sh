@@ -272,7 +272,7 @@ function get_site_server_names()
 	[ $? -eq 0 ] || exit_nosite_error "$site: Site not found"
 
 	servers=( $(awk '/^[[:space:]]*server_name[[:space:]]+/ { for (i=2;i<=NF;i++) print $i }' "$availpath" | tr -d ";" | sort -u | tr "[:space:]" " ") )
-	listen=( $(awk '/^[[:space:]]*listen[[:space:]]+/ { for (i=2;i<=NF;i++) print $i }' "$availpath" | tr -d ";" | sort -u | tr "[:space:]" " ") )
+	listen=( $(awk '/^[[:space:]]*listen[[:space:]]+/ { for (i=2;i<=NF;i++) if (match($i, ":?([[:digit:]]+);?$", parts)) print parts[1] }' "$availpath" | sort -un | tr "[:space:]" " ") )
 
 	servercnt=${#servers[@]}
 
