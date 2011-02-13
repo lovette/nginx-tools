@@ -13,7 +13,7 @@ CMDNAME=$(basename "$CMDPATH")
 CMDDIR=$(dirname "$CMDPATH")
 CMDARGS=$@
 
-NGINX_SITES_VER="1.0.4"
+NGINX_SITES_VER="1.0.5"
 
 NGINX_BIN=$(which nginx 2> /dev/null || echo /usr/sbin/nginx)
 NGINX_CONF=
@@ -1076,6 +1076,10 @@ shift
 
 # Use the default configuration file if none is specified
 [ -n "$NGINX_CONF" ] || NGINX_CONF=$(getdefaultconfpath)
+
+# Confirm conf file exists and is readable
+[ -f "$NGINX_CONF" ] || exit_gen_error "$NGINX_CONF: Cannot open file for reading (no such file)"
+[ -r "$NGINX_CONF" ] || exit_gen_error "$NGINX_CONF: Cannot open file for reading (permission denied)"
 
 set_sites_dirs
 
