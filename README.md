@@ -7,6 +7,7 @@ Tools
 ---
 
 * [nginx-sites](https://github.com/lovette/nginx-tools/tree/master/nginx-sites) - Simple site status management
+* [nginx-minify-conf](https://github.com/lovette/nginx-tools/tree/master/nginx-minify-conf) - Minify nginx configuration file
 
 
 Requirements
