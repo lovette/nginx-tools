@@ -13,10 +13,10 @@ CMDNAME=$(basename "$CMDPATH")
 CMDDIR=$(dirname "$CMDPATH")
 CMDARGS=$@
 
-NGINX_SITES_VER="1.0.3"
+NGINX_SITES_VER="1.0.4"
 
-NGINX_BIN=$(which nginx 2> /dev/null)
-NGINX_CONF="/etc/nginx/nginx.conf"
+NGINX_BIN=$(which nginx 2> /dev/null || echo /usr/sbin/nginx)
+NGINX_CONF=
 NGINX_DIR_CONF=
 NGINX_SITES_DIR_AVAIL=
 NGINX_SITES_DIR_ENABLED=
@@ -148,6 +148,20 @@ function safe_exec()
 	elif [ $GETOPT_VERBOSE -gt 2 ]; then
 		echo "$@"
 	fi
+}
+
+# Attempts to determine nginx configuration file path as compiled in the binary
+function getdefaultconfpath()
+{
+	local path=
+
+	[ -x "$NGINX_BIN" ] || exit_error "$NGINX_BIN: Cannot locate the nginx binary, confirm it is on your PATH"
+
+	path=$($NGINX_BIN -V 2>&1 | awk 'BEGIN {RS=" "} {if(split($0,a,"=")==2 && a[1]=="--conf-path") print a[2]}')
+	[ -n "$path" ] || exit_error "Cannot determine nginx configuration file path from 'nginx -V'"
+
+	echo "$path"
+	return 0;
 }
 
 # enum_groups()
@@ -568,7 +582,7 @@ function set_sites_dirs()
 # Print version and exit
 function version()
 {
-	echo "nginx-site $NGINX_SITES_VER"
+	echo "nginx-sites $NGINX_SITES_VER"
 	echo
 	echo "Copyright (C) 2011 Lance Lovette"
 	echo "Licensed under the BSD License."
@@ -1059,6 +1073,9 @@ shift $(($OPTIND - 1))
 # First argument is the command
 COMMAND="$1"
 shift
+
+# Use the default configuration file if none is specified
+[ -n "$NGINX_CONF" ] || NGINX_CONF=$(getdefaultconfpath)
 
 set_sites_dirs
 

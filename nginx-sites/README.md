@@ -28,7 +28,7 @@ directory.
 	nginx-sites [OPTION]... enable <site>...
 	nginx-sites [OPTION]... disable <site>...
 
-Run the command with `--help` argument or see nginx-sites(1) to see available OPTIONS.
+Run the command with `--help` argument or see nginx-sites(1) for available OPTIONS.
 
 
 ## Commands
@@ -51,7 +51,7 @@ Run the command with `--help` argument or see nginx-sites(1) to see available OP
 ## Options
 
 * `-c FILE` - Override default configuration file
-* `-h`, `--help` - Show this help and exit
+* `-h`, `--help` - Show command line help and exit
 * `-n` - Dry run; do not change configuration
 * `-q` - Quiet; do not write anything to standard output; implies `-y`
 * `-r` - Reload nginx if status changes are made
