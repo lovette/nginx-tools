@@ -600,7 +600,7 @@ function usage()
 	echo
 	echo "Usage: nginx-sites [--help|-h] [--version|-V]"
 	echo "   or: nginx-sites [OPTION]... list [--prefixroot] [group <group>]... [enabled|disabled]"
-	echo "   or: nginx-sites [OPTION]... status [<site>...]"
+	echo "   or: nginx-sites [OPTION]... status [--oneline] [<site>...]"
 	echo "   or: nginx-sites [OPTION]... enable <site>..."
 	echo "   or: nginx-sites [OPTION]... disable <site>..."
 	echo
@@ -755,21 +755,31 @@ function cmd_status()
 	local sitesenabled=0
 	local sitesdisabled=0
 	local site=
+	local optoneline=0
 
 	# Parse command arguments
 	while (($#))
 	do
 		case "$1" in
+		"--oneline")
+			optoneline=1
+			;;
 		"compgen")
 			shift
 			local cword=$1
 			shift
 			local words=( "$@" )
+			local cur="${words[cword]}"
 			local prev="${words[cword-1]}"
 			local opts=""
 
 			case "$prev" in
-			"status") opts="all group $(cmd_list)";;
+			"status")
+				if [[ "${cur}" = -* ]]; then
+					opts="--oneline"
+				else
+					opts="all group $(cmd_list)"
+				fi;;
 			"all") opts="";;
 			"group") opts=$(enum_groups);;
 			*) opts="group $(cmd_list)";;
@@ -821,12 +831,16 @@ function cmd_status()
 
 	sitesdisabled=$(( ${#selectsites[@]} - $sitesenabled ))
 
+	if [ $optoneline -eq 1 ]; then
+		echo -e "$sitesenabled of ${#selectsites[@]} $(pluralize ${#selectsites[@]} "site is" "sites are") ${TTYGREEN}enabled${TTYRESET}"
+	else
 	print_sites_status_grid "${selectsites[@]}"
 
 	# Print a total summary
 	echo
 	echo -e "$sitesenabled $(pluralize $sitesenabled site sites) ${TTYGREEN}enabled${TTYRESET}"
 	echo -e "$sitesdisabled $(pluralize $sitesdisabled site sites) ${TTYRED}disabled${TTYRESET}"
+	fi
 
 	# Exit code signals site status
 	[ $sitesdisabled -eq 0 ] && exit $EXIT_STATUS_ENABLED

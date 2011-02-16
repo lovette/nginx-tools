@@ -24,7 +24,7 @@ directory.
 
 	nginx-sites [--help|-h] [--version|-V]
 	nginx-sites [OPTION]... list [--prefixroot] [group <group>]... [enabled|disabled]
-	nginx-sites [OPTION]... status [<site>...]
+	nginx-sites [OPTION]... status [--oneline] [<site>...]
 	nginx-sites [OPTION]... enable <site>...
 	nginx-sites [OPTION]... disable <site>...
 
