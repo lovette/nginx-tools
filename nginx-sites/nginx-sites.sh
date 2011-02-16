@@ -13,7 +13,7 @@ CMDNAME=$(basename "$CMDPATH")
 CMDDIR=$(dirname "$CMDPATH")
 CMDARGS=$@
 
-NGINX_SITES_VER="1.0.5"
+NGINX_SITES_VER="1.0.6"
 
 NGINX_BIN=$(which nginx 2> /dev/null || echo /usr/sbin/nginx)
 NGINX_CONF=
@@ -834,12 +834,12 @@ function cmd_status()
 	if [ $optoneline -eq 1 ]; then
 		echo -e "$sitesenabled of ${#selectsites[@]} $(pluralize ${#selectsites[@]} "site is" "sites are") ${TTYGREEN}enabled${TTYRESET}"
 	else
-	print_sites_status_grid "${selectsites[@]}"
+		print_sites_status_grid "${selectsites[@]}"
 
-	# Print a total summary
-	echo
-	echo -e "$sitesenabled $(pluralize $sitesenabled site sites) ${TTYGREEN}enabled${TTYRESET}"
-	echo -e "$sitesdisabled $(pluralize $sitesdisabled site sites) ${TTYRED}disabled${TTYRESET}"
+		# Print a total summary
+		echo
+		echo -e "$sitesenabled $(pluralize $sitesenabled site sites) ${TTYGREEN}enabled${TTYRESET}"
+		echo -e "$sitesdisabled $(pluralize $sitesdisabled site sites) ${TTYRED}disabled${TTYRESET}"
 	fi
 
 	# Exit code signals site status
