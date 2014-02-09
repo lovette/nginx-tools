@@ -11,8 +11,9 @@ Individual sites are then enabled by creating a symbolic link to the configurati
 file from within a second directory, typically named `sites-enabled`.
 The main nginx configuration file then has an `include sites-enabled/*` directive.
 This tool provides a simple way to manage the links in the `sites-enabled`
-directory.
-
+directory. Available sites can be grouped together by placing their configuration
+files within a subdirectory of `sites-available`. Sites can be managed
+individually, by group or using a shell pattern.
 
 ## Features
 
@@ -64,7 +65,7 @@ Run the command with `--help` argument or see nginx-sites(1) for available OPTIO
 * `-y` - Answer yes for all questions
 
 
-## Configuration file
+## Configuration directives
 
 Comment blocks in the main nginx configuration file are parsed for `nginx-sites-*` configuration options.
 The default nginx configuration file path is `/etc/nginx/nginx.conf`. This path can be changed

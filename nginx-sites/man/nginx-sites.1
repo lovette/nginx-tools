@@ -87,7 +87,17 @@ Select only site \fIsite\fR in group \fIgroup\fR.
 .TP
 \fIgroup\fR/\fIpattern\fR
 Select all sites in group \fIgroup\fR whose name matches shell pattern \fIpattern\fR.
-.SH "CONFIGURATION FILE"
+.SH BACKGROUND
+This tool assumes that the nginx configuration files that define available servers
+are kept together in a directory, typically named \fBsites-available\fR.
+Individual sites are then enabled by creating a symbolic link to the configuration
+file from within a second directory, typically named \fBsites-enabled\fR.
+The main nginx configuration file then has an \fBinclude sites-enabled/*\fR directive.
+This tool provides a simple way to manage the links in the \fBsites-enabled\fR
+directory. Available sites can be grouped together by placing their configuration
+files within a subdirectory of \fBsites-available\fR. Sites can be managed
+individually, by group or using a shell pattern.
+.SH "CONFIGURATION DIRECTIVES"
 Comment blocks in the main nginx configuration file are parsed for
 \fInginx-sites-*\fR configuration options.
 The default nginx configuration file path is /etc/nginx/nginx.conf.
