@@ -13,7 +13,7 @@ CMDNAME=$(basename "$CMDPATH")
 CMDDIR=$(dirname "$CMDPATH")
 CMDARGS=$@
 
-NGINX_SITES_VER="1.0.6"
+NGINX_SITES_VER="1.0.7"
 
 NGINX_BIN=$(which nginx 2> /dev/null || echo /usr/sbin/nginx)
 NGINX_CONF=
